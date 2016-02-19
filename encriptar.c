@@ -1,42 +1,61 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include "dic.h"
 
-int main (void){
-	FILE *archive;
-	FILE *archiveout;
-	char *str = malloc(200);
-	char *strarchiveout = malloc(200); 
-	char caracter;
-
-	printf("ingresa el nombre del archivo a encriptar con punto de extension por favor:\n");
-	scanf("%s",str);
-	archive = fopen(str, "r");
-	if(archive == NULL){
-		printf("el archivo no existe\n");
-		return(0);
-	}
-
-	printf("ingresa el nombre del archivo de salida con punto de extension por favor:\n");
-	scanf("%s",strarchiveout);
-	archiveout = fopen(strarchiveout, "wr");
-	if(archiveout == NULL){
-		printf("se produjo un error\n");
-		return(0);
-	}
-
-	while (feof(archive) == 0){
-		caracter = fgetc(archive);
-		if (feof(archive) == 0) 
-		{
-			dic(caracter, archiveout);
-		}
-		
-	}
+int main (int argc, char *argv[]) {
+    FILE *archive;
+    FILE *archiveout;
+    // Max path 200 characters
+    char *str = calloc(200, sizeof(char));
+    char *strout = calloc(200, sizeof(char));
+    char character;
 
 
-	fclose(archiveout);
-	fclose(archive);
-	return 0;
+    // Check args
+    if(argc == 4 || argc == 2) {
+        for(int i = 1; i < argc; i++) {
+            if(strcmp(argv[i], "-o") == 0 && i + 1 < argc)
+                strcpy(strout, argv[++i]);
+            else
+                strcpy(str, argv[i]);
+        }
+    } else {
+        printf("Cantidad de argumentos incorrecta\n");
+        return 0;
+    }
+
+    // Output standar
+    if(strout[0] == '\0')
+        strcpy(strout, "salida.txt");
+
+    // Open input file
+    archive = fopen(str, "r");
+    if(archive == NULL) {
+        printf("El archivo no existe\n");
+        return(0);
+    }
+
+    // Open output file
+    archiveout = fopen(strout, "w");
+    if(archiveout == NULL) {
+        printf("Se produjo un error\n");
+        return(0);
+    }
+
+    // Write
+    while (feof(archive) == 0){
+        character = fgetc(archive);
+        if (feof(archive) == 0)
+        {
+            dic(character, archiveout);
+        }
+    }
+
+    free(str);
+    free(strout);
+    fclose(archive);
+    fclose(archiveout);
+    return 0;
 }

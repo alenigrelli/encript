@@ -4,10 +4,10 @@ CFLAGS = -Wall -Werror -Wextra -pedantic -std=c99 -g
 VFLAGS = --leak-check=full --show-reachable=yes
 OBJECTS = dic.o
 
-encriptar : $(OBJECTS)
+encriptar : $(OBJECTS) encriptar.c
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS) encriptar.c
 
-dic.o : dic.c dic.o
+dic.o : dic.c
 	$(CC) $(CFLAGS) -c $<
 
 .PHONY : clean
